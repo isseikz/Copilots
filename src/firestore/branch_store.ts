@@ -36,13 +36,14 @@ export async function addBranch(data: Branch) {
 }
 
 export async function getBranchBy(id: string): Promise<Branch | null> {
-    sendDebug("getTask")
+    sendDebug("getBranchBy")
     const db = getFirestore()
-    const docRef = doc(db, `branches/${id}`)
+    const collRef = collection(db, "branches")
+    const docRef = doc(collRef, id)
     const document = await getDoc(docRef)
 
     if (!document.exists()) {
-        sendError(Error(`Failed to resolve task with ${id}`));
+        sendError(Error(`Failed to resolve with ${id}`));
         return null
     }
     return {

@@ -42,13 +42,14 @@ export async function addCommit(data: Commit) {
 }
 
 export async function getCommitBy(id: string): Promise<Commit | null> {
-    sendDebug("getTask")
+    sendDebug("getCommitBy")
     const db = getFirestore()
-    const docRef = doc(db, `commits/${id}`)
+    const collRef = collection(db, "commits")
+    const docRef = doc(collRef, id)
     const document = await getDoc(docRef)
 
     if (!document.exists()) {
-        sendError(Error(`Failed to resolve task with ${id}`));
+        sendError(Error(`Failed to resolve with ${id}`));
         return null
     }
     return {

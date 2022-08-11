@@ -84,12 +84,13 @@ function addBranch(data) {
 exports.addBranch = addBranch;
 function getBranchBy(id) {
     return __awaiter(this, void 0, void 0, function* () {
-        (0, github_1.sendDebug)("getTask");
+        (0, github_1.sendDebug)("getBranchBy");
         const db = (0, firestore_1.getFirestore)();
-        const docRef = (0, firestore_1.doc)(db, `branches/${id}`);
+        const collRef = (0, firestore_1.collection)(db, "branches");
+        const docRef = (0, firestore_1.doc)(collRef, id);
         const document = yield (0, firestore_1.getDoc)(docRef);
         if (!document.exists()) {
-            (0, github_1.sendError)(Error(`Failed to resolve task with ${id}`));
+            (0, github_1.sendError)(Error(`Failed to resolve with ${id}`));
             return null;
         }
         return {
@@ -164,12 +165,13 @@ function addCommit(data) {
 exports.addCommit = addCommit;
 function getCommitBy(id) {
     return __awaiter(this, void 0, void 0, function* () {
-        (0, github_1.sendDebug)("getTask");
+        (0, github_1.sendDebug)("getCommitBy");
         const db = (0, firestore_1.getFirestore)();
-        const docRef = (0, firestore_1.doc)(db, `commits/${id}`);
+        const collRef = (0, firestore_1.collection)(db, "commits");
+        const docRef = (0, firestore_1.doc)(collRef, id);
         const document = yield (0, firestore_1.getDoc)(docRef);
         if (!document.exists()) {
-            (0, github_1.sendError)(Error(`Failed to resolve task with ${id}`));
+            (0, github_1.sendError)(Error(`Failed to resolve with ${id}`));
             return null;
         }
         return {
@@ -311,9 +313,10 @@ function addTask(data) {
 exports.addTask = addTask;
 function getTaskBy(taskId) {
     return __awaiter(this, void 0, void 0, function* () {
-        (0, github_1.sendDebug)("getTask");
+        (0, github_1.sendDebug)(`getTaskBy ${taskId}`);
         const db = (0, lite_1.getFirestore)();
-        const docRef = (0, lite_1.doc)(db, "tasks", taskId);
+        const collRef = (0, lite_1.collection)(db, "tasks");
+        const docRef = (0, lite_1.doc)(collRef, taskId);
         const task = yield (0, lite_1.getDoc)(docRef);
         if (!task.exists()) {
             (0, github_1.sendError)(Error(`Failed to resolve task with ${taskId}`));

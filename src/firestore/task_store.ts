@@ -44,7 +44,7 @@ export async function addTask(data: Task) {
 export async function getTaskBy(taskId: string): Promise<Task | null> {
     sendDebug("getTask")
     const db = getFirestore()
-    const docRef = doc(db, `/tasks/${taskId}`)
+    const docRef = doc(db, `tasks/${taskId}`)
     const task = await getDoc(docRef)
 
     if (!task.exists()) {

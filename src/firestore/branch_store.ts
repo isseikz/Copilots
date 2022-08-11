@@ -38,7 +38,7 @@ export async function addBranch(data: Branch) {
 export async function getBranchBy(id: string): Promise<Branch | null> {
     sendDebug("getTask")
     const db = getFirestore()
-    const docRef = doc(db, `/branches/${id}`)
+    const docRef = doc(db, `branches/${id}`)
     const document = await getDoc(docRef)
 
     if (!document.exists()) {

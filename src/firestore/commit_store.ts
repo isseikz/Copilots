@@ -44,7 +44,7 @@ export async function addCommit(data: Commit) {
 export async function getCommitBy(id: string): Promise<Commit | null> {
     sendDebug("getTask")
     const db = getFirestore()
-    const docRef = doc(db, `/commits/${id}`)
+    const docRef = doc(db, `commits/${id}`)
     const document = await getDoc(docRef)
 
     if (!document.exists()) {

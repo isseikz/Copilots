@@ -52,9 +52,12 @@ async function run(): Promise<void> {
     sendDebug(myOutcomes.toString())
     myOutcomes.forEach(async (value) => {
       let pushes = await findCommits(value, commits)
-      let branch = await getBranchBy(value.task)
-      if (branch != null && pushes.length > 0) {
-        git.pushCommits(branch, pushes)
+      let task = await getTaskBy(value.task)
+      if (task != null) {
+        let branch = await getBranchBy(task.branch)
+        if (branch != null && pushes.length > 0) {
+          git.pushCommits(branch, pushes)
+        }
       }
     })
   // } catch (error) {

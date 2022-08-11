@@ -568,9 +568,12 @@ function run() {
         (0, github_1.sendDebug)(myOutcomes.toString());
         myOutcomes.forEach((value) => __awaiter(this, void 0, void 0, function* () {
             let pushes = yield findCommits(value, commits);
-            let branch = yield (0, branch_store_1.getBranchBy)(value.task);
-            if (branch != null && pushes.length > 0) {
-                git.pushCommits(branch, pushes);
+            let task = yield (0, task_store_1.getTaskBy)(value.task);
+            if (task != null) {
+                let branch = yield (0, branch_store_1.getBranchBy)(task.branch);
+                if (branch != null && pushes.length > 0) {
+                    git.pushCommits(branch, pushes);
+                }
             }
         }));
         // } catch (error) {

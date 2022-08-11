@@ -26,6 +26,9 @@
   "license": "MIT",
   "dependencies": {
     "@actions/core": "^1.6.0",
+    "@actions/github": "^5.0.3",
+    "@octokit/rest": "^19.0.3",
+    "firebase": "^9.9.2",
     "new_package": "^1.0.1"
   },
   "devDependencies": {
@@ -33,7 +36,7 @@
     "@typescript-eslint/parser": "^5.8.1",
     "@vercel/ncc": "^0.31.1",
     "eslint": "^7.32.0",
-    "eslint-plugin-github": "^4.3.7",
+    "eslint-plugin-github": "4.1.5",
     "eslint-plugin-jest": "^25.3.2",
     "jest": "^27.2.5",
     "js-yaml": "^4.1.0",

@@ -8,3 +8,7 @@ export async function getParams() {
         user: user
     }
 }
+
+export function sendError(message: Error) {
+    core.error(message)
+}

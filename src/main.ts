@@ -1,8 +1,9 @@
 import { Commit, Outcome } from './data'
 import { getCommit } from './firestore/commit_store'
 import { getOutcome } from './firestore/outcome_store'
-import { getParams } from './github'
+import { getParams, sendError } from './github'
 import { Git } from './git'
+import { countReset } from 'console'
 
 
 export function filterMyOutcomes(user: string, outcomes: Outcome[]): Outcome[] {
@@ -38,7 +39,7 @@ async function run(): Promise<void> {
       git.pushCommits(value.task.branch, pushes)
     })
   } catch (error) {
-    if (error instanceof Error) console.error(error)
+    if (error instanceof Error) sendError(error)
   }
 }
 

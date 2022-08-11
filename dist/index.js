@@ -350,6 +350,7 @@ const git_1 = __nccwpck_require__(3374);
 function filterMyOutcomes(user, outcomes) {
     (0, github_1.sendDebug)("filterMyOutcomes");
     return outcomes.filter((value, index, array) => {
+        (0, github_1.sendDebug)(`${value.id} ${value.task.user}`);
         return value.task.user == user;
     });
 }

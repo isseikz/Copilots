@@ -9,6 +9,7 @@ import { countReset } from 'console'
 export function filterMyOutcomes(user: string, outcomes: Outcome[]): Outcome[] {
   sendDebug("filterMyOutcomes")
   return outcomes.filter((value, index, array) => {
+    sendDebug(`${value.id} ${value.task.user}`)
     return value.task.user == user
   })
 }

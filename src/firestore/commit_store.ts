@@ -10,7 +10,8 @@ import {
     collection,
     getDocs,
     Query,
-    QuerySnapshot
+    QuerySnapshot,
+    getDoc
 } from 'firebase/firestore'
 import { Commit } from '../data'
 import { sendDebug } from "../github"
@@ -38,6 +39,20 @@ export async function addCommit(data: Commit) {
     const db = getFirestore(app)
     const docRef = doc(db, 'commites', data.id).withConverter(commitConverter)
     await setDoc(docRef, data)
+}
+
+export async function getCommitBy(taskId: string): Promise<Commit> {
+    sendDebug("getTask")
+    const db = getFirestore()
+    const docRef = doc(db, `/commits/${taskId}`)
+    const document = await getDoc(docRef)
+
+    if (!document.exists()) throw new Error("Failed to resolve task")    
+    return {
+        id: document.id,
+        diff: document.data().diff,
+        parent: document.data().parent
+    }
 }
 
 export async function getCommit(): Promise<Commit[]> {

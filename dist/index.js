@@ -41,6 +41,81 @@ module.exports = {"i8":"1.6.9"};
 
 /***/ }),
 
+/***/ 9085:
+/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
+
+"use strict";
+
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.getBranch = exports.getBranchBy = exports.addBranch = void 0;
+const firestore_1 = __nccwpck_require__(11);
+const github_1 = __nccwpck_require__(5928);
+const firebase_app_1 = __nccwpck_require__(6044);
+const branchConverter = {
+    toFirestore(branch) {
+        return {
+            name: branch.name,
+        };
+    },
+    fromFirestore(snapshot, options) {
+        const data = snapshot.data(options);
+        return {
+            id: snapshot.id,
+            name: data.name,
+        };
+    },
+};
+function addBranch(data) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const db = (0, firestore_1.getFirestore)(firebase_app_1.app);
+        const docRef = (0, firestore_1.doc)(db, 'branches', data.id).withConverter(branchConverter);
+        yield (0, firestore_1.setDoc)(docRef, data);
+    });
+}
+exports.addBranch = addBranch;
+function getBranchBy(taskId) {
+    return __awaiter(this, void 0, void 0, function* () {
+        (0, github_1.sendDebug)("getTask");
+        const db = (0, firestore_1.getFirestore)();
+        const docRef = (0, firestore_1.doc)(db, `/branches/${taskId}`);
+        const document = yield (0, firestore_1.getDoc)(docRef);
+        if (!document.exists())
+            throw new Error("Failed to resolve task");
+        return {
+            id: document.id,
+            name: document.data().name
+        };
+    });
+}
+exports.getBranchBy = getBranchBy;
+function getBranch() {
+    return __awaiter(this, void 0, void 0, function* () {
+        (0, github_1.sendDebug)("getBranch");
+        const db = (0, firestore_1.getFirestore)(firebase_app_1.app);
+        const collRef = (0, firestore_1.collection)(db, '/branches'); //.withConverter(branchConverter)
+        const snapshot = yield (0, firestore_1.getDocs)(collRef);
+        return snapshot.docs.map((doc) => {
+            return {
+                id: doc.id,
+                name: doc.data().name
+            };
+        });
+    });
+}
+exports.getBranch = getBranch;
+
+
+/***/ }),
+
 /***/ 3267:
 /***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
@@ -56,7 +131,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.getCommit = exports.addCommit = void 0;
+exports.getCommit = exports.getCommitBy = exports.addCommit = void 0;
 const firestore_1 = __nccwpck_require__(11);
 const github_1 = __nccwpck_require__(5928);
 const firebase_app_1 = __nccwpck_require__(6044);
@@ -85,6 +160,22 @@ function addCommit(data) {
     });
 }
 exports.addCommit = addCommit;
+function getCommitBy(taskId) {
+    return __awaiter(this, void 0, void 0, function* () {
+        (0, github_1.sendDebug)("getTask");
+        const db = (0, firestore_1.getFirestore)();
+        const docRef = (0, firestore_1.doc)(db, `/commits/${taskId}`);
+        const document = yield (0, firestore_1.getDoc)(docRef);
+        if (!document.exists())
+            throw new Error("Failed to resolve task");
+        return {
+            id: document.id,
+            diff: document.data().diff,
+            parent: document.data().parent
+        };
+    });
+}
+exports.getCommitBy = getCommitBy;
 function getCommit() {
     return __awaiter(this, void 0, void 0, function* () {
         (0, github_1.sendDebug)("getCommit");
@@ -184,6 +275,93 @@ function getOutcome() {
     });
 }
 exports.getOutcome = getOutcome;
+
+
+/***/ }),
+
+/***/ 9588:
+/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
+
+"use strict";
+
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.getTask = exports.getTaskBy = exports.addTask = void 0;
+const firestore_1 = __nccwpck_require__(11);
+const github_1 = __nccwpck_require__(5928);
+const taskConverter = {
+    toFirestore(data) {
+        return {
+            branch: data.branch,
+            commit: data.commit,
+            issue: data.issue,
+            user: data.user,
+        };
+    },
+    fromFirestore(snapshot, options) {
+        const data = snapshot.data(options);
+        // Book オブジェクトの id プロパティには Firestore ドキュメントの id を入れる。
+        return {
+            id: snapshot.id,
+            branch: data.branch,
+            commit: data.commit,
+            issue: data.issue,
+            user: data.user,
+        };
+    },
+};
+function addTask(data) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const db = (0, firestore_1.getFirestore)();
+        const docRef = (0, firestore_1.doc)(db, 'tasks', data.id).withConverter(taskConverter);
+        yield (0, firestore_1.setDoc)(docRef, data);
+    });
+}
+exports.addTask = addTask;
+function getTaskBy(taskId) {
+    return __awaiter(this, void 0, void 0, function* () {
+        (0, github_1.sendDebug)("getTask");
+        const db = (0, firestore_1.getFirestore)();
+        const docRef = (0, firestore_1.doc)(db, `/tasks/${taskId}`);
+        const task = yield (0, firestore_1.getDoc)(docRef);
+        if (!task.exists())
+            throw new Error("Failed to resolve task");
+        return {
+            id: task.id,
+            user: task.data().user,
+            branch: task.data().branch,
+            commit: task.data().commit,
+            issue: task.data().issue,
+        };
+    });
+}
+exports.getTaskBy = getTaskBy;
+function getTask() {
+    return __awaiter(this, void 0, void 0, function* () {
+        (0, github_1.sendDebug)("getTask");
+        const db = (0, firestore_1.getFirestore)();
+        const collRef = (0, firestore_1.collection)(db, '/tasks'); //.withConverter(taskConverter)
+        const snapshot = yield (0, firestore_1.getDocs)(collRef);
+        return snapshot.docs.map((doc) => {
+            return {
+                id: doc.id,
+                user: doc.data().user,
+                branch: doc.data().branch,
+                commit: doc.data().commit,
+                issue: doc.data().issue
+            };
+        });
+    });
+}
+exports.getTask = getTask;
 
 
 /***/ }),
@@ -347,29 +525,37 @@ const commit_store_1 = __nccwpck_require__(3267);
 const outcome_store_1 = __nccwpck_require__(1707);
 const github_1 = __nccwpck_require__(5928);
 const git_1 = __nccwpck_require__(3374);
+const task_store_1 = __nccwpck_require__(9588);
+const branch_store_1 = __nccwpck_require__(9085);
 function filterMyOutcomes(user, outcomes) {
-    (0, github_1.sendDebug)("filterMyOutcomes");
-    return outcomes.filter((value, index, array) => {
-        (0, github_1.sendDebug)(`${value.id} ${value.task.user}`);
-        return value.task.user == user;
+    return __awaiter(this, void 0, void 0, function* () {
+        (0, github_1.sendDebug)("filterMyOutcomes");
+        return outcomes.filter((value) => __awaiter(this, void 0, void 0, function* () {
+            let task = yield (0, task_store_1.getTaskBy)(value.task);
+            (0, github_1.sendDebug)(`${value.id} ${task.user}`);
+            return task.user == user;
+        }));
     });
 }
 exports.filterMyOutcomes = filterMyOutcomes;
 function findCommits(outcome, commits) {
-    (0, github_1.sendDebug)("findCommits");
-    let filtered = [];
-    var parent = outcome.task.commit;
-    do {
-        var children = commits.filter((value) => { return value.parent == parent; });
-        if (children.length > 0) {
-            parent = children[0];
-            filtered.push(parent);
-        }
-        else {
-            break;
-        }
-    } while (children.length > 0);
-    return filtered;
+    return __awaiter(this, void 0, void 0, function* () {
+        (0, github_1.sendDebug)("findCommits");
+        let filtered = [];
+        var outcomeTask = yield (0, task_store_1.getTaskBy)(outcome.task);
+        var parent = yield (0, commit_store_1.getCommitBy)(outcomeTask.commit);
+        do {
+            var children = commits.filter((value) => { return value.parent == parent.id; });
+            if (children.length > 0) {
+                parent = yield (0, commit_store_1.getCommitBy)(children[0].id);
+                filtered.push(parent);
+            }
+            else {
+                break;
+            }
+        } while (children.length > 0);
+        return filtered;
+    });
 }
 exports.findCommits = findCommits;
 function run() {
@@ -380,13 +566,13 @@ function run() {
         const outcomes = yield (0, outcome_store_1.getOutcome)();
         const commits = yield (0, commit_store_1.getCommit)();
         (0, github_1.sendDebug)(commits.toString());
-        const myOutcomes = filterMyOutcomes(user, outcomes);
+        const myOutcomes = yield filterMyOutcomes(user, outcomes);
         (0, github_1.sendDebug)(myOutcomes.toString());
-        myOutcomes.forEach((value) => {
-            let pushes = findCommits(value, commits);
-            (0, github_1.sendDebug)(pushes.toString());
-            git.pushCommits(value.task.branch, pushes);
-        });
+        myOutcomes.forEach((value) => __awaiter(this, void 0, void 0, function* () {
+            let pushes = yield findCommits(value, commits);
+            let branch = yield (0, branch_store_1.getBranchBy)(value.task);
+            git.pushCommits(branch, pushes);
+        }));
         // } catch (error) {
         //   if (error instanceof Error) sendError(error)
         // }

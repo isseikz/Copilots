@@ -6,7 +6,7 @@ export type Branch = {
 export type Commit = {
     id: string
     diff: string
-    parent?: Commit
+    parent?: string
 }
 
 export type Issue = {
@@ -17,13 +17,13 @@ export type Issue = {
 
 export type Outcome = {
     id: string
-    task: Task
+    task: string
 }
 
 export type Task = {
     id: string
     user: string
-    branch: Branch
-    commit: Commit
-    issue: Issue
+    branch: string
+    commit: string
+    issue: string
 }

@@ -7,7 +7,8 @@ import {
     getFirestore,
     setDoc,
     collection,
-    getDocs
+    getDocs,
+    getDoc
 } from 'firebase/firestore'
 import { Task } from '../data'
 import { sendDebug } from '../github'
@@ -38,6 +39,22 @@ export async function addTask(data: Task) {
     const db = getFirestore()
     const docRef = doc(db, 'tasks', data.id).withConverter(taskConverter)
     await setDoc(docRef, data)
+}
+
+export async function getTaskBy(taskId: string): Promise<Task> {
+    sendDebug("getTask")
+    const db = getFirestore()
+    const docRef = doc(db, `/tasks/${taskId}`)
+    const task = await getDoc(docRef)
+
+    if (!task.exists()) throw new Error("Failed to resolve task")    
+    return {
+        id: task.id,
+        user: task.data().user,
+        branch: task.data().branch,
+        commit: task.data().commit,
+        issue: task.data().issue,
+    }
 }
 
 export async function getTask(): Promise<Task[]> {

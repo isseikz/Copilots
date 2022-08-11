@@ -34,7 +34,6 @@ async function run(): Promise<void> {
   // try {
     const user = await (await getParams()).user
     const outcomes = await getOutcome()
-    sendDebug(outcomes.toString())
     const commits = await getCommit()
     sendDebug(commits.toString())
     const myOutcomes = filterMyOutcomes(user, outcomes)

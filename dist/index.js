@@ -172,9 +172,10 @@ function getOutcome() {
     return __awaiter(this, void 0, void 0, function* () {
         (0, github_1.sendDebug)("getOutcome");
         const db = (0, firestore_1.getFirestore)();
-        const collRef = (0, firestore_1.collection)(db, '/outcomes').withConverter(outcomeConverter);
+        const collRef = (0, firestore_1.collection)(db, '/outcomes'); //.withConverter(outcomeConverter)
         const snapshot = yield (0, firestore_1.getDocs)(collRef);
         return snapshot.docs.map((doc) => {
+            (0, github_1.sendDebug)(doc.id);
             return {
                 id: doc.id,
                 task: doc.data().task
@@ -376,7 +377,6 @@ function run() {
         // try {
         const user = yield (yield (0, github_1.getParams)()).user;
         const outcomes = yield (0, outcome_store_1.getOutcome)();
-        (0, github_1.sendDebug)(outcomes.toString());
         const commits = yield (0, commit_store_1.getCommit)();
         (0, github_1.sendDebug)(commits.toString());
         const myOutcomes = filterMyOutcomes(user, outcomes);

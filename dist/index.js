@@ -313,7 +313,7 @@ function getTaskBy(taskId) {
     return __awaiter(this, void 0, void 0, function* () {
         (0, github_1.sendDebug)("getTask");
         const db = (0, lite_1.getFirestore)();
-        const docRef = (0, lite_1.doc)(db, `tasks/${taskId}`);
+        const docRef = (0, lite_1.doc)(db, "tasks", taskId);
         const task = yield (0, lite_1.getDoc)(docRef);
         if (!task.exists()) {
             (0, github_1.sendError)(Error(`Failed to resolve task with ${taskId}`));

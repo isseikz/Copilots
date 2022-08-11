@@ -11,6 +11,7 @@ export async function filterMyOutcomes(user: string, outcomes: Outcome[]): Promi
   sendDebug("filterMyOutcomes")
   return outcomes.filter(async (value) => {
     let task = await getTaskBy(value.task)
+    if (task == null) return false
     sendDebug(`${value.id} ${task.user}`)
     return task.user == user
   })
@@ -20,6 +21,8 @@ export async function findCommits(outcome: Outcome, commits: Commit[]): Promise<
   sendDebug("findCommits")
   let filtered = [] 
   var outcomeTask = await getTaskBy(outcome.task)
+  if (outcomeTask == null) return []
+  
   var parent = await getCommitBy(outcomeTask.commit)
   do {
     var children = commits.filter((value) => { return value.parent == parent.id })

@@ -332,8 +332,10 @@ function getTaskBy(taskId) {
         const db = (0, firestore_1.getFirestore)();
         const docRef = (0, firestore_1.doc)(db, `/tasks/${taskId}`);
         const task = yield (0, firestore_1.getDoc)(docRef);
-        if (!task.exists())
-            throw new Error("Failed to resolve task");
+        if (!task.exists()) {
+            (0, github_1.sendError)(Error(`Failed to resolve task with ${taskId}`));
+            return null;
+        }
         return {
             id: task.id,
             user: task.data().user,
@@ -532,6 +534,8 @@ function filterMyOutcomes(user, outcomes) {
         (0, github_1.sendDebug)("filterMyOutcomes");
         return outcomes.filter((value) => __awaiter(this, void 0, void 0, function* () {
             let task = yield (0, task_store_1.getTaskBy)(value.task);
+            if (task == null)
+                return false;
             (0, github_1.sendDebug)(`${value.id} ${task.user}`);
             return task.user == user;
         }));
@@ -543,6 +547,8 @@ function findCommits(outcome, commits) {
         (0, github_1.sendDebug)("findCommits");
         let filtered = [];
         var outcomeTask = yield (0, task_store_1.getTaskBy)(outcome.task);
+        if (outcomeTask == null)
+            return [];
         var parent = yield (0, commit_store_1.getCommitBy)(outcomeTask.commit);
         do {
             var children = commits.filter((value) => { return value.parent == parent.id; });

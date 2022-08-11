@@ -37,5 +37,10 @@ export async function getOutcome(): Promise<Outcome[]> {
     const db = getFirestore()
     const collRef = collection(db, '/outcomes').withConverter(outcomeConverter)
     const snapshot = await getDocs(collRef)
-    return snapshot.docs.map((doc) => doc.data())
+    return snapshot.docs.map((doc) => {
+        return {
+            id: doc.id,
+            task: doc.data().task
+        }
+    })
 }

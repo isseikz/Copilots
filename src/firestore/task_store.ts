@@ -41,7 +41,15 @@ export async function addTask(data: Task) {
 
 export async function getTask(): Promise<Task[]> {
     const db = getFirestore()
-    const collRef = collection(db, '/tasks').withConverter(taskConverter)
+    const collRef = collection(db, '/tasks')//.withConverter(taskConverter)
     const snapshot = await getDocs(collRef)
-    return snapshot.docs.map((doc) => doc.data())
+    return snapshot.docs.map((doc) => {
+        return {
+            id: doc.id,
+            user: doc.data().user,
+            branch: doc.data().branch,
+            commit: doc.data().commit,
+            issue: doc.data().issue
+        }
+    })
 }

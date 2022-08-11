@@ -87,9 +87,15 @@ exports.addCommit = addCommit;
 function getCommit() {
     return __awaiter(this, void 0, void 0, function* () {
         const db = (0, firestore_1.getFirestore)(firebase_app_1.app);
-        const collRef = (0, firestore_1.collection)(db, '/commites').withConverter(commitConverter);
+        const collRef = (0, firestore_1.collection)(db, '/commites'); //.withConverter(commitConverter)
         const snapshot = yield (0, firestore_1.getDocs)(collRef);
-        return snapshot.docs.map((doc) => doc.data());
+        return snapshot.docs.map((doc) => {
+            return {
+                id: doc.id,
+                diff: doc.data().diff,
+                parent: doc.data().parent
+            };
+        });
     });
 }
 exports.getCommit = getCommit;
@@ -163,7 +169,12 @@ function getOutcome() {
         const db = (0, firestore_1.getFirestore)();
         const collRef = (0, firestore_1.collection)(db, '/outcomes').withConverter(outcomeConverter);
         const snapshot = yield (0, firestore_1.getDocs)(collRef);
-        return snapshot.docs.map((doc) => doc.data());
+        return snapshot.docs.map((doc) => {
+            return {
+                id: doc.id,
+                task: doc.data().task
+            };
+        });
     });
 }
 exports.getOutcome = getOutcome;

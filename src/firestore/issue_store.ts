@@ -36,7 +36,13 @@ export async function addIssue(data: Issue) {
 
 export async function getIssue(): Promise<Issue[]> {
     const db = getFirestore()
-    const collRef = collection(db, '/issues').withConverter(issueConverter)
+    const collRef = collection(db, '/issues')//.withConverter(issueConverter)
     const snapshot = await getDocs(collRef)
-    return snapshot.docs.map((doc) => doc.data())
+    return snapshot.docs.map((doc) => {
+        return {
+            id: doc.id,
+            title: doc.data().title,
+            body: doc.data().body
+        }
+    })
 }

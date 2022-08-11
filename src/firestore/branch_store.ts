@@ -35,7 +35,12 @@ export async function addBranch(data: Branch) {
 
 export async function getBranch(): Promise<Branch[]> {
     const db = getFirestore(app)
-    const collRef = collection(db, '/branches').withConverter(branchConverter)
+    const collRef = collection(db, '/branches')//.withConverter(branchConverter)
     const snapshot = await getDocs(collRef)
-    return snapshot.docs.map((doc) => doc.data())
+    return snapshot.docs.map((doc) => { 
+        return {
+            id: doc.id,
+            name: doc.data().name
+        }
+    })
 }

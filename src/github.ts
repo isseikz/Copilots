@@ -9,6 +9,10 @@ export async function getParams() {
     }
 }
 
+export function sendDebug(message: String) {
+    core.debug(message)
+}
+
 export function sendError(message: Error) {
     core.error(message)
 }

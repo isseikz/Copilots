@@ -1,7 +1,7 @@
 import { Commit, Outcome } from './data'
 import { getCommit } from './firestore/commit_store'
 import { getOutcome } from './firestore/outcome_store'
-import { getParams, sendError } from './github'
+import { getParams, sendDebug, sendError } from './github'
 import { Git } from './git'
 import { countReset } from 'console'
 
@@ -32,10 +32,14 @@ async function run(): Promise<void> {
   try {
     const user = await (await getParams()).user
     const outcomes = await getOutcome()
+    sendDebug(outcomes.toString())
     const commits = await getCommit()
+    sendDebug(commits.toString())
     const myOutcomes = filterMyOutcomes(user, outcomes)
+    sendDebug(myOutcomes.toString())
     myOutcomes.forEach((value) => {
       let pushes = findCommits(value, commits)
+      sendDebug(pushes.toString())
       git.pushCommits(value.task.branch, pushes)
     })
   } catch (error) {

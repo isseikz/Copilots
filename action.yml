@@ -7,7 +7,7 @@ inputs:
     description: 'Your github account name is required to select outcomes for you.'
   github-token:
     required: true
-    description:' Token is required to push outcome commits for your branch.'
+    description: 'Token is required to push outcome commits for your branch.'
 runs:
   using: 'node16'
   main: 'dist/index.js'

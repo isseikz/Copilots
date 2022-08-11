@@ -278,7 +278,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.getParams = void 0;
+exports.sendError = exports.sendDebug = exports.getParams = void 0;
 const core = __importStar(__nccwpck_require__(2186));
 function getParams() {
     return __awaiter(this, void 0, void 0, function* () {
@@ -289,6 +289,14 @@ function getParams() {
     });
 }
 exports.getParams = getParams;
+function sendDebug(message) {
+    core.debug(message);
+}
+exports.sendDebug = sendDebug;
+function sendError(message) {
+    core.error(message);
+}
+exports.sendError = sendError;
 
 
 /***/ }),
@@ -341,16 +349,20 @@ function run() {
         try {
             const user = yield (yield (0, github_1.getParams)()).user;
             const outcomes = yield (0, outcome_store_1.getOutcome)();
+            (0, github_1.sendDebug)(outcomes.toString());
             const commits = yield (0, commit_store_1.getCommit)();
+            (0, github_1.sendDebug)(commits.toString());
             const myOutcomes = filterMyOutcomes(user, outcomes);
+            (0, github_1.sendDebug)(myOutcomes.toString());
             myOutcomes.forEach((value) => {
                 let pushes = findCommits(value, commits);
+                (0, github_1.sendDebug)(pushes.toString());
                 git.pushCommits(value.task.branch, pushes);
             });
         }
         catch (error) {
             if (error instanceof Error)
-                console.error(error);
+                (0, github_1.sendError)(error);
         }
     });
 }

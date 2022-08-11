@@ -9,7 +9,7 @@ export async function getParams() {
     }
 }
 
-export function sendDebug(message: String) {
+export function sendDebug(message: string) {
     core.debug(message)
 }
 

@@ -22,12 +22,17 @@ export async function findCommits(outcome: Outcome, commits: Commit[]): Promise<
   let filtered = [] 
   var outcomeTask = await getTaskBy(outcome.task)
   if (outcomeTask == null) return []
-  
-  var parent = await getCommitBy(outcomeTask.commit)
+
+  let firstCommit = await getCommitBy(outcomeTask.commit)
+  if (firstCommit == null) return []
+  var parent = firstCommit
+
   do {
     var children = commits.filter((value) => { return value.parent == parent.id })
     if (children.length > 0) {
-      parent = await getCommitBy(children[0].id) 
+      let commit = await getCommitBy(children[0].id)
+      if (commit == null) break
+      parent = commit
       filtered.push(parent)
     } else {
       break
@@ -48,7 +53,9 @@ async function run(): Promise<void> {
     myOutcomes.forEach(async (value) => {
       let pushes = await findCommits(value, commits)
       let branch = await getBranchBy(value.task)
-      git.pushCommits(branch, pushes)
+      if (branch != null && pushes.length > 0) {
+        git.pushCommits(branch, pushes)
+      }
     })
   // } catch (error) {
   //   if (error instanceof Error) sendError(error)

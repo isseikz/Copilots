@@ -11,7 +11,7 @@ import {
     getDoc
 } from 'firebase/firestore'
 import { Branch } from '../data'
-import { sendDebug } from '../github'
+import { sendDebug, sendError } from '../github'
 import { app } from './firebase_app'
 
 const branchConverter: FirestoreDataConverter<Branch> = {
@@ -35,13 +35,16 @@ export async function addBranch(data: Branch) {
     await setDoc(docRef, data)
 }
 
-export async function getBranchBy(taskId: string): Promise<Branch> {
+export async function getBranchBy(id: string): Promise<Branch | null> {
     sendDebug("getTask")
     const db = getFirestore()
-    const docRef = doc(db, `/branches/${taskId}`)
+    const docRef = doc(db, `/branches/${id}`)
     const document = await getDoc(docRef)
 
-    if (!document.exists()) throw new Error("Failed to resolve task")    
+    if (!document.exists()) {
+        sendError(Error(`Failed to resolve task with ${id}`));
+        return null
+    }
     return {
         id: document.id,
         name: document.data().name

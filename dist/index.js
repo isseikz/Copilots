@@ -82,14 +82,16 @@ function addBranch(data) {
     });
 }
 exports.addBranch = addBranch;
-function getBranchBy(taskId) {
+function getBranchBy(id) {
     return __awaiter(this, void 0, void 0, function* () {
         (0, github_1.sendDebug)("getTask");
         const db = (0, firestore_1.getFirestore)();
-        const docRef = (0, firestore_1.doc)(db, `/branches/${taskId}`);
+        const docRef = (0, firestore_1.doc)(db, `/branches/${id}`);
         const document = yield (0, firestore_1.getDoc)(docRef);
-        if (!document.exists())
-            throw new Error("Failed to resolve task");
+        if (!document.exists()) {
+            (0, github_1.sendError)(Error(`Failed to resolve task with ${id}`));
+            return null;
+        }
         return {
             id: document.id,
             name: document.data().name
@@ -160,14 +162,16 @@ function addCommit(data) {
     });
 }
 exports.addCommit = addCommit;
-function getCommitBy(taskId) {
+function getCommitBy(id) {
     return __awaiter(this, void 0, void 0, function* () {
         (0, github_1.sendDebug)("getTask");
         const db = (0, firestore_1.getFirestore)();
-        const docRef = (0, firestore_1.doc)(db, `/commits/${taskId}`);
+        const docRef = (0, firestore_1.doc)(db, `/commits/${id}`);
         const document = yield (0, firestore_1.getDoc)(docRef);
-        if (!document.exists())
-            throw new Error("Failed to resolve task");
+        if (!document.exists()) {
+            (0, github_1.sendError)(Error(`Failed to resolve task with ${id}`));
+            return null;
+        }
         return {
             id: document.id,
             diff: document.data().diff,
@@ -549,11 +553,17 @@ function findCommits(outcome, commits) {
         var outcomeTask = yield (0, task_store_1.getTaskBy)(outcome.task);
         if (outcomeTask == null)
             return [];
-        var parent = yield (0, commit_store_1.getCommitBy)(outcomeTask.commit);
+        let firstCommit = yield (0, commit_store_1.getCommitBy)(outcomeTask.commit);
+        if (firstCommit == null)
+            return [];
+        var parent = firstCommit;
         do {
             var children = commits.filter((value) => { return value.parent == parent.id; });
             if (children.length > 0) {
-                parent = yield (0, commit_store_1.getCommitBy)(children[0].id);
+                let commit = yield (0, commit_store_1.getCommitBy)(children[0].id);
+                if (commit == null)
+                    break;
+                parent = commit;
                 filtered.push(parent);
             }
             else {
@@ -577,7 +587,9 @@ function run() {
         myOutcomes.forEach((value) => __awaiter(this, void 0, void 0, function* () {
             let pushes = yield findCommits(value, commits);
             let branch = yield (0, branch_store_1.getBranchBy)(value.task);
-            git.pushCommits(branch, pushes);
+            if (branch != null && pushes.length > 0) {
+                git.pushCommits(branch, pushes);
+            }
         }));
         // } catch (error) {
         //   if (error instanceof Error) sendError(error)

@@ -14,7 +14,7 @@ import {
     getDoc
 } from 'firebase/firestore'
 import { Commit } from '../data'
-import { sendDebug } from "../github"
+import { sendDebug, sendError } from "../github"
 import { app } from "./firebase_app"
 
 const commitConverter: FirestoreDataConverter<Commit> = {
@@ -41,13 +41,16 @@ export async function addCommit(data: Commit) {
     await setDoc(docRef, data)
 }
 
-export async function getCommitBy(taskId: string): Promise<Commit> {
+export async function getCommitBy(id: string): Promise<Commit | null> {
     sendDebug("getTask")
     const db = getFirestore()
-    const docRef = doc(db, `/commits/${taskId}`)
+    const docRef = doc(db, `/commits/${id}`)
     const document = await getDoc(docRef)
 
-    if (!document.exists()) throw new Error("Failed to resolve task")    
+    if (!document.exists()) {
+        sendError(Error(`Failed to resolve task with ${id}`));
+        return null
+    }
     return {
         id: document.id,
         diff: document.data().diff,

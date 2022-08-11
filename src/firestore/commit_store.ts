@@ -43,7 +43,7 @@ export async function addCommit(data: Commit) {
 export async function getCommit(): Promise<Commit[]> {
     sendDebug("getCommit")
     const db = getFirestore(app)
-    const collRef = collection(db, '/commites')//.withConverter(commitConverter)
+    const collRef = collection(db, '/commits')//.withConverter(commitConverter)
     const snapshot = await getDocs(collRef)
     return snapshot.docs.map((doc) => {
         return {

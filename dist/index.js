@@ -89,7 +89,7 @@ function getCommit() {
     return __awaiter(this, void 0, void 0, function* () {
         (0, github_1.sendDebug)("getCommit");
         const db = (0, firestore_1.getFirestore)(firebase_app_1.app);
-        const collRef = (0, firestore_1.collection)(db, '/commites'); //.withConverter(commitConverter)
+        const collRef = (0, firestore_1.collection)(db, '/commits'); //.withConverter(commitConverter)
         const snapshot = yield (0, firestore_1.getDocs)(collRef);
         return snapshot.docs.map((doc) => {
             return {

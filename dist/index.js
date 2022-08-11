@@ -346,24 +346,22 @@ exports.findCommits = findCommits;
 function run() {
     return __awaiter(this, void 0, void 0, function* () {
         let git = new git_1.Git("bot", "mail@example.com");
-        try {
-            const user = yield (yield (0, github_1.getParams)()).user;
-            const outcomes = yield (0, outcome_store_1.getOutcome)();
-            (0, github_1.sendDebug)(outcomes.toString());
-            const commits = yield (0, commit_store_1.getCommit)();
-            (0, github_1.sendDebug)(commits.toString());
-            const myOutcomes = filterMyOutcomes(user, outcomes);
-            (0, github_1.sendDebug)(myOutcomes.toString());
-            myOutcomes.forEach((value) => {
-                let pushes = findCommits(value, commits);
-                (0, github_1.sendDebug)(pushes.toString());
-                git.pushCommits(value.task.branch, pushes);
-            });
-        }
-        catch (error) {
-            if (error instanceof Error)
-                (0, github_1.sendError)(error);
-        }
+        // try {
+        const user = yield (yield (0, github_1.getParams)()).user;
+        const outcomes = yield (0, outcome_store_1.getOutcome)();
+        (0, github_1.sendDebug)(outcomes.toString());
+        const commits = yield (0, commit_store_1.getCommit)();
+        (0, github_1.sendDebug)(commits.toString());
+        const myOutcomes = filterMyOutcomes(user, outcomes);
+        (0, github_1.sendDebug)(myOutcomes.toString());
+        myOutcomes.forEach((value) => {
+            let pushes = findCommits(value, commits);
+            (0, github_1.sendDebug)(pushes.toString());
+            git.pushCommits(value.task.branch, pushes);
+        });
+        // } catch (error) {
+        //   if (error instanceof Error) sendError(error)
+        // }
     });
 }
 run();

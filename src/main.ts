@@ -29,7 +29,7 @@ export function findCommits(outcome: Outcome, commits: Commit[]): Commit[] {
 
 async function run(): Promise<void> {
   let git = new Git("bot", "mail@example.com")
-  try {
+  // try {
     const user = await (await getParams()).user
     const outcomes = await getOutcome()
     sendDebug(outcomes.toString())
@@ -42,9 +42,9 @@ async function run(): Promise<void> {
       sendDebug(pushes.toString())
       git.pushCommits(value.task.branch, pushes)
     })
-  } catch (error) {
-    if (error instanceof Error) sendError(error)
-  }
+  // } catch (error) {
+  //   if (error instanceof Error) sendError(error)
+  // }
 }
 
 run()

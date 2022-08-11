@@ -10,6 +10,7 @@ import {
     getDocs
 } from 'firebase/firestore'
 import { Outcome } from '../data'
+import { sendDebug } from '../github'
 
 const outcomeConverter: FirestoreDataConverter<Outcome> = {
     toFirestore(data: Outcome): DocumentData {
@@ -28,12 +29,14 @@ const outcomeConverter: FirestoreDataConverter<Outcome> = {
 }
 
 export async function addOutcome(data: Outcome) {
+    sendDebug("addOutcome")
     const db = getFirestore()
     const docRef = doc(db, 'outcomes', data.id).withConverter(outcomeConverter)
     await setDoc(docRef, data)
 }
 
 export async function getOutcome(): Promise<Outcome[]> {
+    sendDebug("getOutcome")
     const db = getFirestore()
     const collRef = collection(db, '/outcomes').withConverter(outcomeConverter)
     const snapshot = await getDocs(collRef)

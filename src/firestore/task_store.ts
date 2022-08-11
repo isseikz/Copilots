@@ -10,6 +10,7 @@ import {
     getDocs
 } from 'firebase/firestore'
 import { Task } from '../data'
+import { sendDebug } from '../github'
 
 const taskConverter: FirestoreDataConverter<Task> = {
     toFirestore(data: Task): DocumentData {
@@ -40,6 +41,7 @@ export async function addTask(data: Task) {
 }
 
 export async function getTask(): Promise<Task[]> {
+    sendDebug("getTask")
     const db = getFirestore()
     const collRef = collection(db, '/tasks')//.withConverter(taskConverter)
     const snapshot = await getDocs(collRef)

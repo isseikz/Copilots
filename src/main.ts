@@ -7,12 +7,14 @@ import { countReset } from 'console'
 
 
 export function filterMyOutcomes(user: string, outcomes: Outcome[]): Outcome[] {
+  sendDebug("filterMyOutcomes")
   return outcomes.filter((value, index, array) => {
     return value.task.user == user
   })
 }
 
 export function findCommits(outcome: Outcome, commits: Commit[]): Commit[] {
+  sendDebug("findCommits")
   let filtered = []
   var parent = outcome.task.commit
   do {

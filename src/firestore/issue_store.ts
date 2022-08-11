@@ -10,6 +10,7 @@ import {
     getDocs
 } from 'firebase/firestore'
 import { Issue } from '../data'
+import { sendDebug } from '../github'
 
 const issueConverter: FirestoreDataConverter<Issue> = {
     toFirestore(data: Issue): DocumentData {
@@ -35,6 +36,7 @@ export async function addIssue(data: Issue) {
 }
 
 export async function getIssue(): Promise<Issue[]> {
+    sendDebug("getIssue")
     const db = getFirestore()
     const collRef = collection(db, '/issues')//.withConverter(issueConverter)
     const snapshot = await getDocs(collRef)

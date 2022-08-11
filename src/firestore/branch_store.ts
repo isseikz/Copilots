@@ -10,6 +10,7 @@ import {
     getDocs
 } from 'firebase/firestore'
 import { Branch } from '../data'
+import { sendDebug } from '../github'
 import { app } from './firebase_app'
 
 const branchConverter: FirestoreDataConverter<Branch> = {
@@ -34,6 +35,7 @@ export async function addBranch(data: Branch) {
 }
 
 export async function getBranch(): Promise<Branch[]> {
+    sendDebug("getBranch")
     const db = getFirestore(app)
     const collRef = collection(db, '/branches')//.withConverter(branchConverter)
     const snapshot = await getDocs(collRef)

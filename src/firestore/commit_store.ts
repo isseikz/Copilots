@@ -13,6 +13,7 @@ import {
     QuerySnapshot
 } from 'firebase/firestore'
 import { Commit } from '../data'
+import { sendDebug } from "../github"
 import { app } from "./firebase_app"
 
 const commitConverter: FirestoreDataConverter<Commit> = {
@@ -40,6 +41,7 @@ export async function addCommit(data: Commit) {
 }
 
 export async function getCommit(): Promise<Commit[]> {
+    sendDebug("getCommit")
     const db = getFirestore(app)
     const collRef = collection(db, '/commites')//.withConverter(commitConverter)
     const snapshot = await getDocs(collRef)

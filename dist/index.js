@@ -58,6 +58,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.getCommit = exports.addCommit = void 0;
 const firestore_1 = __nccwpck_require__(11);
+const github_1 = __nccwpck_require__(5928);
 const firebase_app_1 = __nccwpck_require__(6044);
 const commitConverter = {
     toFirestore(data) {
@@ -86,6 +87,7 @@ function addCommit(data) {
 exports.addCommit = addCommit;
 function getCommit() {
     return __awaiter(this, void 0, void 0, function* () {
+        (0, github_1.sendDebug)("getCommit");
         const db = (0, firestore_1.getFirestore)(firebase_app_1.app);
         const collRef = (0, firestore_1.collection)(db, '/commites'); //.withConverter(commitConverter)
         const snapshot = yield (0, firestore_1.getDocs)(collRef);
@@ -141,6 +143,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.getOutcome = exports.addOutcome = void 0;
 const firestore_1 = __nccwpck_require__(11);
+const github_1 = __nccwpck_require__(5928);
 const outcomeConverter = {
     toFirestore(data) {
         return {
@@ -158,6 +161,7 @@ const outcomeConverter = {
 };
 function addOutcome(data) {
     return __awaiter(this, void 0, void 0, function* () {
+        (0, github_1.sendDebug)("addOutcome");
         const db = (0, firestore_1.getFirestore)();
         const docRef = (0, firestore_1.doc)(db, 'outcomes', data.id).withConverter(outcomeConverter);
         yield (0, firestore_1.setDoc)(docRef, data);
@@ -166,6 +170,7 @@ function addOutcome(data) {
 exports.addOutcome = addOutcome;
 function getOutcome() {
     return __awaiter(this, void 0, void 0, function* () {
+        (0, github_1.sendDebug)("getOutcome");
         const db = (0, firestore_1.getFirestore)();
         const collRef = (0, firestore_1.collection)(db, '/outcomes').withConverter(outcomeConverter);
         const snapshot = yield (0, firestore_1.getDocs)(collRef);
@@ -214,27 +219,35 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.Git = void 0;
 const child_process_1 = __nccwpck_require__(3129);
 const fs = __importStar(__nccwpck_require__(5747));
+const github_1 = __nccwpck_require__(5928);
 class Git {
     constructor(user, email) {
+        (0, github_1.sendDebug)("Git.()");
         (0, child_process_1.execSync)(`git config --global user.name ${user}`);
         (0, child_process_1.execSync)(`git config --global user.name ${email}`);
     }
     fetch(branch, depth) {
+        (0, github_1.sendDebug)("git.fetch");
         (0, child_process_1.execSync)(`git fetch origin ${branch} --depth ${depth}`);
     }
     checkout(branch) {
+        (0, github_1.sendDebug)("git.checkout");
         (0, child_process_1.execSync)(`git checkout ${branch}`);
     }
     add(path = ".") {
+        (0, github_1.sendDebug)("git.add");
         (0, child_process_1.execSync)(`git add ${path}`);
     }
     commit(message) {
+        (0, github_1.sendDebug)("git.commit");
         (0, child_process_1.execSync)(`git commit -m ${message}`);
     }
     push(isForce = false) {
+        (0, github_1.sendDebug)("git.push");
         (0, child_process_1.execSync)(`git push ${isForce ? "-f" : ""}`);
     }
     pushCommits(branch, commits) {
+        (0, github_1.sendDebug)("git.pushCommits");
         this.fetch(branch.name, 1);
         this.checkout(branch.name);
         commits.forEach((value) => {
@@ -293,6 +306,7 @@ exports.sendError = exports.sendDebug = exports.getParams = void 0;
 const core = __importStar(__nccwpck_require__(2186));
 function getParams() {
     return __awaiter(this, void 0, void 0, function* () {
+        sendDebug("getParams");
         const user = core.getInput('user');
         return {
             user: user
@@ -333,12 +347,14 @@ const outcome_store_1 = __nccwpck_require__(1707);
 const github_1 = __nccwpck_require__(5928);
 const git_1 = __nccwpck_require__(3374);
 function filterMyOutcomes(user, outcomes) {
+    (0, github_1.sendDebug)("filterMyOutcomes");
     return outcomes.filter((value, index, array) => {
         return value.task.user == user;
     });
 }
 exports.filterMyOutcomes = filterMyOutcomes;
 function findCommits(outcome, commits) {
+    (0, github_1.sendDebug)("findCommits");
     let filtered = [];
     var parent = outcome.task.commit;
     do {

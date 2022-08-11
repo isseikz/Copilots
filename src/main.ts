@@ -1,20 +1,21 @@
 import { Commit, Outcome } from './data'
 import { getCommit } from './firestore/commit_store'
 import { getOutcome } from './firestore/outcome_store'
-import { getParams, pushCommits } from './github'
+import { getParams } from './github'
+import { Git } from './git'
 
 
-function filterMyOutcomes(user: string, outcomes: Outcome[]) {
+export function filterMyOutcomes(user: string, outcomes: Outcome[]): Outcome[] {
   return outcomes.filter((value, index, array) => {
-    value.task.user == user
+    return value.task.user == user
   })
 }
 
-function findCommits(outcome: Outcome, commits: Commit[]) {
+export function findCommits(outcome: Outcome, commits: Commit[]): Commit[] {
   let filtered = []
   var parent = outcome.task.commit
   do {
-    var children = commits.filter((value) => value.parent == parent)
+    var children = commits.filter((value) => { return value.parent == parent})
     if (children.length > 0) {
       parent = children[0]
       filtered.push(parent)
@@ -26,6 +27,7 @@ function findCommits(outcome: Outcome, commits: Commit[]) {
 }
 
 async function run(): Promise<void> {
+  let git = new Git("bot", "mail@example.com")
   try {
     const user = await (await getParams()).user
     const outcomes = await getOutcome()
@@ -33,7 +35,7 @@ async function run(): Promise<void> {
     const myOutcomes = filterMyOutcomes(user, outcomes)
     myOutcomes.forEach((value) => {
       let pushes = findCommits(value, commits)
-      pushCommits(value.task.branch, pushes)
+      git.pushCommits(value.task.branch, pushes)
     })
   } catch (error) {
     if (error instanceof Error) console.error(error)

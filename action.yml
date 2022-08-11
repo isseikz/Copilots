@@ -1,11 +1,13 @@
-name: 'Your name here'
-description: 'Provide a description here'
-author: 'Your name or organization here'
+name: 'Retrieve outcomes by human copilots'
+description: ''
+author: 'isseikz'
 inputs:
-  milliseconds: # change this
+  user:
     required: true
-    description: 'input description here'
-    default: 'default value if applicable'
+    description: 'Your github account name is required to select outcomes for you.'
+  github-token:
+    required: true
+    description:' Token is required to push outcome commits for your branch.'
 runs:
   using: 'node16'
   main: 'dist/index.js'

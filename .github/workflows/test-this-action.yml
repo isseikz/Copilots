@@ -15,7 +15,7 @@ jobs:
     name: Update latest tasks
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v3.1.0
       - name: Human copilot
         uses: isseikz/human-copilots-action@main
         with:
